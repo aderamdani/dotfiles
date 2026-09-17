@@ -3,21 +3,25 @@
 ## 1. Install Tooling
 
 ### Xcode Command Line Tools
+
 ```bash
 xcode-select --install
 ```
 
 ### Homebrew
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 ### iTerm2
+
 ```bash
 brew install --cask iterm2
 ```
 
 ### Opencode
+
 ```bash
 brew install anomalyco/tap/opencode
 ```
@@ -25,36 +29,112 @@ brew install anomalyco/tap/opencode
 API Key Opencode: isi sendiri di file ini setelah clone (JANGAN commit API key ke repo publik).
 
 ### Vorssaint
+
 ```bash
 brew uninstall --cask vorssaint
 ```
 
 ## 2. Optimasi Animasi & Kecepatan
 
-Jalankan semua, lalu `killall Dock && killall Finder`.
+### 2a. Dock Animation
+
+| Key                         | Default | Recommended | Effect                |
+| --------------------------- | ------- | ----------- | --------------------- |
+| `autohide-delay`            | 0.5     | 0           | Dock muncul instan    |
+| `autohide-time-modifier`    | 0.5     | 0.15        | Slide cepat           |
+| `expose-animation-duration` | 0.25    | 0.1         | Mission Control cepat |
+| `launchanim`                | true    | false       | Tanpa bounce          |
+| `mineffect`                 | genie   | scale       | Minimize cepat        |
+| `springboard-show-duration` | 0.25    | 0.1         | Launchpad cepat       |
 
 ```bash
-# Dock: animasi super cepat
-defaults write com.apple.dock autohide-time-modifier -float 0.15
-defaults write com.apple.dock autohide-delay -float 0
-defaults write com.apple.dock expose-animation-duration -float 0.1
-defaults write com.apple.dock launchanim -bool false
-defaults write com.apple.dock mineffect -string scale        # minimize pakai Scale, bukan Genie
-defaults write com.apple.dock springboard-show-duration -float 0.1
-defaults write com.apple.dock springboard-hide-duration -float 0.1
-
-# Jendela & UI: matikan animasi
-defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
-defaults write NSGlobalDomain NSWindowResizeTime -float 0.001
-defaults write NSGlobalDomain com.apple.sound.uiaudio.enabled -int 0   # matiin suara UI
-defaults write com.apple.finder DisableAllAnimations -bool true
-
-# Keyboard lebih ngebut
-defaults write NSGlobalDomain KeyRepeat -int 2
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
+defaults write com.apple.dock autohide-delay -float 0                   # tunda 0 = instan
+defaults write com.apple.dock autohide-time-modifier -float 0.15        # slide 0.15s
+defaults write com.apple.dock expose-animation-duration -float 0.1      # Mission Control 0.1s
+defaults write com.apple.dock launchanim -bool false                     # matiin bounce
+defaults write com.apple.dock mineffect -string scale                    # scale vs genie
+defaults write com.apple.dock springboard-show-duration -float 0.1      # Launchpad muncul 0.1s
+defaults write com.apple.dock springboard-hide-duration -float 0.1      # Launchpad hilang 0.1s
 ```
 
-Manual (tidak bisa via terminal): **System Settings → Accessibility → Display → Reduce Motion = ON**.
+**minimize effect options**: `scale` (cepat), `genie` (bawaan, gelembung), `suck` (hisap)
+
+### 2b. Window & UI Animation
+
+| Key                                  | Default | Recommended | Effect               |
+| ------------------------------------ | ------- | ----------- | -------------------- |
+| `NSAutomaticWindowAnimationsEnabled` | true    | false       | Jendela instant      |
+| `NSWindowResizeTime`                 | 0.2     | 0.001       | Resize instan        |
+| `com.apple.sound.uiaudio.enabled`    | 1       | 0           | Suara UI mati        |
+| `DisableAllAnimations` (Finder)      | false   | true        | Finder tanpa animasi |
+
+```bash
+defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false   # matiin animasi jendela
+defaults write NSGlobalDomain NSWindowResizeTime -float 0.001                  # resize instan
+defaults write NSGlobalDomain com.apple.sound.uiaudio.enabled -int 0           # suara UI mati
+defaults write com.apple.finder DisableAllAnimations -bool true                # Finder tanpa animasi
+```
+
+### 2c. Keyboard Speed
+
+| Key                | Default        | Recommended | Effect       |
+| ------------------ | -------------- | ----------- | ------------ |
+| `KeyRepeat`        | 6 (~30 char/s) | 2           | Ketik cepat  |
+| `InitialKeyRepeat` | 68 (~680ms)    | 15          | Repeat cepat |
+
+```bash
+defaults write NSGlobalDomain KeyRepeat -int 2            # repeat cepat
+defaults write NSGlobalDomain InitialKeyRepeat -int 15    # delay 150ms
+```
+
+### 2d. Apply Semua Sekaligus
+
+```bash
+killall Dock && killall Finder
+```
+
+**Catatan**: `killall Dock` wajib agar Dock restart dengan setting baru.
+
+### 2e. Reset ke Default
+
+```bash
+# Dock
+defaults delete com.apple.dock autohide-time-modifier
+defaults delete com.apple.dock autohide-delay
+defaults delete com.apple.dock expose-animation-duration
+defaults delete com.apple.dock launchanim
+defaults delete com.apple.dock mineffect
+defaults delete com.apple.dock springboard-show-duration
+defaults delete com.apple.dock springboard-hide-duration
+
+# Window & UI
+defaults delete NSGlobalDomain NSAutomaticWindowAnimationsEnabled
+defaults delete NSGlobalDomain NSWindowResizeTime
+defaults delete NSGlobalDomain com.apple.sound.uiaudio.enabled
+defaults delete com.apple.finder DisableAllAnimations
+
+# Keyboard
+defaults delete NSGlobalDomain KeyRepeat
+defaults delete NSGlobalDomain InitialKeyRepeat
+
+killall Dock && killall Finder
+```
+
+Atau **System Settings → Accessibility → Display → Reduce Motion** (toggle on/off).
+
+### 2f. Check Current Values
+
+```bash
+defaults read com.apple.dock | grep -E "autohide|mineffect|launchanim|springboard"
+defaults read NSGlobalDomain | grep -E "KeyRepeat|NSAutomatic|NSWindowResize"
+```
+
+### 2g. Troubleshooting
+
+- Perubahan tidak muncul? `killall Dock && killall Finder`, atau logout/login.
+- Dock hilang setelah killall? Tunggu 1-2 detik, atau: `open /System/Library/CoreServices/Dock.app`
+- Keyboard repeat terlalu cepat? `defaults delete NSGlobalDomain KeyRepeat && defaults delete NSGlobalDomain InitialKeyRepeat`
+- Kembali ke Genie minimize? `defaults write com.apple.dock mineffect -string genie && killall Dock`
 
 ## 3. Dock Setup
 
@@ -74,6 +154,7 @@ killall Dock
 ```
 
 Pin Apps (Launchpad-nya Tahoe) ke Dock:
+
 ```bash
 defaults write com.apple.dock persistent-apps -array-add '<dict><key>GUID</key><string>{'"$(uuidgen)"'}</string><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>file:///System/Applications/Apps.app/</string><key>_CFURLStringType</key><integer>15</integer></dict><key>file-label</key><string>Apps</string><key>file-type</key><integer>3</integer></dict></dict>' && killall Dock
 ```
@@ -88,6 +169,7 @@ defaults write com.apple.WindowManager StageManagerHideWidgets -bool true  # hid
 Widget di Notification Center: hapus manual via "Edit Widgets" di panel notifikasi.
 
 Sembunyikan aplikasi iPhone/iPad dari daftar Apps (UI only):
+
 - Buka **Apps** → tombol **(•••)** kanan atas → uncheck **Show iPhone Apps**, atau
 - **System Settings → Spotlight → matikan iPhone Apps**.
 
@@ -116,3 +198,5 @@ killall Dock
 
 - Perubahan tidak muncul? `killall Dock`, `killall Finder`, atau logout/login.
 - Jangan klik **Done** pada dialog Hot Corners yang lama setelah setting dari terminal — itu menimpa ulang dengan draft lama.
+- Beberapa perubahan butuh restart (bukan hanya killall Dock).
+- **Reduce Motion** (System Settings → Accessibility → Display) override beberapa animasi.
