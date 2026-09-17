@@ -31,7 +31,7 @@ API Key Opencode: isi sendiri di file ini setelah clone (JANGAN commit API key k
 ### Vorssaint
 
 ```bash
-brew uninstall --cask vorssaint
+brew install --cask vorssaint
 ```
 
 ## 2. Optimasi Animasi & Kecepatan
@@ -200,3 +200,124 @@ killall Dock
 - Jangan klik **Done** pada dialog Hot Corners yang lama setelah setting dari terminal — itu menimpa ulang dengan draft lama.
 - Beberapa perubahan butuh restart (bukan hanya killall Dock).
 - **Reduce Motion** (System Settings → Accessibility → Display) override beberapa animasi.
+
+## 7. Brew Applications
+
+### Formula
+
+```bash
+brew install ada-url brotli bun c-ares ca-certificates fastfetch fmt gh \
+  hdrhistogram_c icu4c@78 libffi libnghttp2 libnghttp3 libngtcp2 libuv \
+  llhttp lz4 merve mpdecimal nbytes node oh-my-posh opencode openssl@3 \
+  payload-dumper-go pcre2 python@3.12 readline ripgrep rtk ruff \
+  simdjson simdutf sqlite tailscale ty uv uvwasi vercel xz yyjson zstd
+```
+
+### Cask
+
+```bash
+brew install --cask android-platform-tools bettercapture free-download-manager \
+  iina iterm2 opencode-desktop terax vorssaint
+```
+
+## 8. Opencode Configuration
+
+### Directory Structure
+
+```bash
+mkdir -p ~/.config/opencode/{agents,commands,plugins,skills}
+```
+
+### opencode.jsonc
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "shell": "zsh",
+  "plugin": [
+    "./plugins/rtk.ts",
+    "token-optimizer-opencode",
+    "./plugins/caveman/plugin.js",
+    "opencode-dcp",
+    "envsitter-guard",
+    "opencode-worktree",
+    "opencode-command-hooks",
+  ],
+  "lsp": {
+    "ty": {
+      "command": ["ty", "server"],
+      "extensions": [".py", ".pyi"],
+    },
+    "ruff": {
+      "command": ["ruff", "server"],
+      "extensions": [".py", ".pyi"],
+    },
+    "typescript": {
+      "command": ["typescript-language-server", "--stdio"],
+      "extensions": [
+        ".ts",
+        ".tsx",
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs",
+        ".mts",
+        ".cts",
+      ],
+    },
+  },
+  "formatter": {
+    "prettier-global": {
+      "command": ["prettier", "--write", "$FILE"],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx",
+        ".mjs",
+        ".cjs",
+        ".json",
+        ".md",
+        ".yaml",
+        ".yml",
+        ".html",
+        ".css",
+      ],
+    },
+  },
+  "permission": {
+    "grep": "allow",
+    "glob": "allow",
+    "bash": {
+      "uv *": "allow",
+      "uvx *": "allow",
+      "ruff *": "allow",
+      "ty *": "allow",
+      "python3.12 *": "allow",
+      "python3 *": "allow",
+      "python *": "allow",
+      "py *": "allow",
+      "rg *": "allow",
+      "node *": "allow",
+      "npm *": "allow",
+      "npx *": "allow",
+      "prettier *": "allow",
+      "tsc *": "allow",
+      "typescript-language-server *": "allow",
+      "gh *": "allow",
+      "vercel *": "allow",
+      "tailscale *": "allow",
+      "writer": "allow",
+      "writer *": "allow",
+      "rtk": "allow",
+      "rtk *": "allow",
+    },
+    "skill": {
+      "*": "ask",
+      "caveman": "allow",
+      "caveman-*": "allow",
+      "cavecrew": "allow",
+    },
+  },
+}
+```
