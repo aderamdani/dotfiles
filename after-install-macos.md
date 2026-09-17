@@ -135,6 +135,9 @@ defaults read NSGlobalDomain | grep -E "KeyRepeat|NSAutomatic|NSWindowResize"
 - Dock hilang setelah killall? Tunggu 1-2 detik, atau: `open /System/Library/CoreServices/Dock.app`
 - Keyboard repeat terlalu cepat? `defaults delete NSGlobalDomain KeyRepeat && defaults delete NSGlobalDomain InitialKeyRepeat`
 - Kembali ke Genie minimize? `defaults write com.apple.dock mineffect -string genie && killall Dock`
+- Jangan klik **Done** pada dialog Hot Corners setelah setting dari terminal — itu menimpa ulang draft lama.
+- Beberapa perubahan butuh restart (bukan hanya killall Dock).
+- **Reduce Motion** (System Settings → Accessibility → Display) override beberapa animasi.
 
 ## 3. Dock Setup
 
@@ -194,14 +197,7 @@ killall Dock
 > Pastikan dialog Hot Corners sudah ditutup (⌘Q System Settings) sebelum mengetes, karena selama dialog terbuka
 > value dari terminal tidak langsung berlaku.
 
-## 6. Troubleshooting
-
-- Perubahan tidak muncul? `killall Dock`, `killall Finder`, atau logout/login.
-- Jangan klik **Done** pada dialog Hot Corners yang lama setelah setting dari terminal — itu menimpa ulang dengan draft lama.
-- Beberapa perubahan butuh restart (bukan hanya killall Dock).
-- **Reduce Motion** (System Settings → Accessibility → Display) override beberapa animasi.
-
-## 7. Brew Applications
+## 6. Brew Applications
 
 ### Formula
 
@@ -220,7 +216,7 @@ brew install --cask android-platform-tools bettercapture free-download-manager \
   iina iterm2 opencode-desktop terax vorssaint
 ```
 
-## 8. Opencode Configuration
+## 7. Opencode Configuration
 
 ### Directory Structure
 
